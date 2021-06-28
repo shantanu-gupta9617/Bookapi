@@ -3,6 +3,10 @@ const express=require("express");
 
 const booky=express();
 
+//configuration
+
+booky.use(express.json())
+
 //Database
 const database=require("./database");
 
@@ -37,6 +41,17 @@ booky.get("/c/:category",(req,res)=>{
 booky.get("/author",(req,res)=>{
     return res.json({authors:database.author});
 })
+booky.get("/author/:isbn",(req,res)=>{
+    const getSpecificBook=database.author.filter((author)=>author.books.includes(req.params.isbn));
+    if(getSpecificBook.length===0)
+    {
+        return res.json({error: `No book found for the author of ${req.params.isbn}`});
+    }
+
+    return res.json({book:getSpecificBook});
+
+
+})
 
 booky.get("/author/book/:isbn",(req,res)=>{
     const getSpecificBook=database.author.filter((author)=>author.books.includes(req.params.isbn));
@@ -52,6 +67,109 @@ booky.get("/author/book/:isbn",(req,res)=>{
 
 booky.get("/publications",(req,res)=>{
     return res.json({publications:database.publication});
+})
+
+booky.post("/book/add",(req,res)=>{
+    const { newBook }=req.body;
+
+    database.books.push(newBook);
+
+    return res.json({books:database.books});
+
+})
+
+//HTTP client -> helper who helps to make http request
+
+booky.post("/author/add",(req,res)=>{
+
+    const { newAuthor }=req.body;
+
+    database.author.push(newAuthor);
+
+    return res.json({authors:database.author});
+
+})
+booky.post("/publication/add",(req,res)=>{
+    const {newPublication}=req.body;
+
+    database.publication.push(newPublication);
+
+    return res.json({publications:database.publication});
+})
+
+booky.put("/booky/update/title/:isbn",(req,res)=>{
+    database.books.forEach((book)=>{
+        if(book.ISBN===req.params.isbn)
+        {
+            book.title=req.body.newBookTitle;
+            return;
+        }
+    });
+    return res.json({books:database.books});
+
+})
+
+booky.put("/book/update/author/:isbn/:authorId",(req,res)=>{
+    //update book database
+
+    database.books.forEach((book)=>{
+        if(book.ISBN===req.params.isbn)
+        {
+            return book.author.push(parseInt(req.params.authorId));
+        }
+    })
+
+    //update author database
+    database.author.forEach((author)=>{
+        if(author.id===parseInt(req.params.authorId)) return author.books.push(req.params.isbn);
+       
+    })
+    return res.json({books:database.books,author:database.author})
+
+})
+
+booky.put("/book/update/author/:authorId",(req,res)=>{
+
+    database.author.forEach((author)=>{
+        if(author.id===parseInt(req.params.authorId))
+        {
+            author.name=req.body.newAuthorName;
+            return;
+        }
+        return res.json({author:database.author});
+    })
+})
+
+booky.put("/book/update/publication/:id",(req,res)=>{
+    database.publication.forEach((publications)=>{
+        if(publications.id===parseInt(req.params.id))
+        {
+          publications.name=req.body.newPublicationName;
+        }
+        return res.json({publication:database.publication});
+        
+    })
+})
+
+booky.route("/publication/update/book/:isbn",(req,res)=>{
+    //update the publication database
+    database.publication.forEach((publication)=>{
+        if(publication.id===req.body.pubId)
+        {
+           return publication.books.push(req.params.isbn);
+        }
+
+    });
+    //update the book database
+    database.books.forEach((book)=>{
+
+        if(book.ISBN===req.params.isbn)
+        {
+            book.publication=req.body.pubId;
+            return;
+        }
+    });
+    return res.json({books:database.books,publications:database.publication,message:"Successfilly updated publication"});
 })
 
 
