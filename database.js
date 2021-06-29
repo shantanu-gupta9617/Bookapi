@@ -1,4 +1,4 @@
-const books=[{
+let books=[{
     ISBN:"12345Book",
     title:"Getting started with MERN",
     pubDate:"2021-07-07",
@@ -7,7 +7,18 @@ const books=[{
     author:[1,2],
     publications:[1],
     category:["tech","programming","education","thriller"]
-}];
+},
+{
+    ISBN:"12345Two",
+    title:"Getting started with MERN",
+    pubDate:"2021-07-07",
+    language:"en",
+    numPage:250,
+    author:[1,2],
+    publications:[1],
+    category:["tech","programming","education","thriller"]
+}
+];
 
 const author=[{
     id:1,
