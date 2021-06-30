@@ -19,6 +19,17 @@ useCreateIndex: true}
 //Database
 const database=require("./database/database");
 
+//Models
+const BookModels=require("./database/book");
+
+// const AuthorModels=require("./database/author");
+
+// const PublicationModel=require("./database/publication");
+
+
+
+
+
 //get book
 booky.get("/",(req,res)=>{
     return res.json({books: database.books})
