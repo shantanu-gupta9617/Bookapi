@@ -17,7 +17,7 @@ useCreateIndex: true}
 .then(()=>console.log("Connection estblished!!!!!"));
 
 //Database
-const database=require("./database");
+const database=require("./database/database");
 
 //get book
 booky.get("/",(req,res)=>{
